@@ -7,8 +7,8 @@ use rmcp::{
 };
 use tokio::io::{stdin, stdout};
 use tools::{
-    EchoRequest, ElixirProjectsRequest, LsRequest, SpotifyRequest,
-    handle_echo, handle_elixir_projects, handle_ls, handle_pwd, handle_spotify,
+    ElixirProjectsRequest, SpotifyRequest,
+    handle_elixir_projects, handle_spotify,
 };
 
 #[derive(Clone)]
@@ -22,27 +22,6 @@ impl Steve {
         Self {
             tool_router: Self::tool_router(),
         }
-    }
-
-    #[tool(description = "Echo back the provided message")]
-    async fn echo(
-        &self,
-        Parameters(req): Parameters<EchoRequest>,
-    ) -> Result<CallToolResult, McpError> {
-        Ok(handle_echo(req))
-    }
-
-    #[tool(description = "Get the current working directory")]
-    async fn pwd(&self) -> Result<CallToolResult, McpError> {
-        Ok(handle_pwd())
-    }
-
-    #[tool(description = "List files in the specified directory")]
-    async fn ls(
-        &self,
-        Parameters(req): Parameters<LsRequest>,
-    ) -> Result<CallToolResult, McpError> {
-        Ok(handle_ls(req))
     }
 
     #[tool(description = "Control Spotify playing in Firefox via MPRIS. Actions: play, pause, play_pause, next, previous, status")]
