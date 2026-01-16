@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "steve": {
+      "command": "/home/whk/src/wkirschbaum/steve/target/release/steve",
+      "args": []
+    }
+  }
+}
