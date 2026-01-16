@@ -1,19 +1,23 @@
 mod tools;
 
 use rmcp::{
+    ErrorData as McpError, ServerHandler, ServiceExt,
     handler::server::{router::tool::ToolRouter, wrapper::Parameters},
     model::{CallToolResult, Implementation, ProtocolVersion, ServerCapabilities, ServerInfo},
-    tool, tool_handler, tool_router, ErrorData as McpError, ServerHandler, ServiceExt,
+    tool, tool_handler, tool_router,
 };
 use tokio::io::{stdin, stdout};
-use tools::{
-    ElixirProjectsRequest, SpotifyRequest,
-    handle_elixir_projects, handle_spotify,
-};
+use tools::{ElixirProjectsRequest, SpotifyRequest, handle_elixir_projects, handle_spotify};
 
 #[derive(Clone)]
 pub struct Steve {
     tool_router: ToolRouter<Self>,
+}
+
+impl Default for Steve {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 #[tool_router]
@@ -24,7 +28,9 @@ impl Steve {
         }
     }
 
-    #[tool(description = "Control Spotify playing in Firefox via MPRIS. Actions: play, pause, play_pause, next, previous, status")]
+    #[tool(
+        description = "Control Spotify playing in Firefox via MPRIS. Actions: play, pause, play_pause, next, previous, status"
+    )]
     async fn spotify(
         &self,
         Parameters(req): Parameters<SpotifyRequest>,
@@ -32,7 +38,9 @@ impl Steve {
         Ok(handle_spotify(req).await)
     }
 
-    #[tool(description = "Manage Elixir projects. Actions: list, update_deps, outdated, git_pull, git_push, git_status, refresh. Uses cached project list from ~/.cache/steve/projects. Use 'project' to filter by name.")]
+    #[tool(
+        description = "Manage Elixir projects. Actions: list, update_deps, outdated, git_pull, git_push, git_status, refresh. Uses cached project list from ~/.cache/steve/projects. Use 'project' to filter by name."
+    )]
     async fn elixir_projects(
         &self,
         Parameters(req): Parameters<ElixirProjectsRequest>,

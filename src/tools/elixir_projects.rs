@@ -434,7 +434,10 @@ fn handle_ignore(req: &ElixirProjectsRequest) -> CallToolResult {
     }
 
     let _ = save_ignored_projects(&ignored);
-    CallToolResult::success(vec![Content::text(format!("Ignored: {}", added.join(", ")))])
+    CallToolResult::success(vec![Content::text(format!(
+        "Ignored: {}",
+        added.join(", ")
+    ))])
 }
 
 fn handle_unignore(req: &ElixirProjectsRequest) -> CallToolResult {
@@ -494,12 +497,7 @@ fn load_ignored_projects() -> HashSet<String> {
 
     fs::File::open(&ignore_path)
         .ok()
-        .map(|file| {
-            BufReader::new(file)
-                .lines()
-                .map_while(Result::ok)
-                .collect()
-        })
+        .map(|file| BufReader::new(file).lines().map_while(Result::ok).collect())
         .unwrap_or_default()
 }
 
@@ -597,19 +595,20 @@ fn scan_elixir_projects(path: Option<&str>) -> Vec<PathBuf> {
         .into_iter()
         .filter_entry(|e| {
             // Skip certain directories
-            if e.file_type().is_dir() {
-                if let Some(name) = e.file_name().to_str() {
-                    return !skip_dirs.contains(name);
-                }
+            if e.file_type().is_dir()
+                && let Some(name) = e.file_name().to_str()
+            {
+                return !skip_dirs.contains(name);
             }
             true
         })
         .filter_map(|e| e.ok())
     {
-        if entry.file_type().is_file() && entry.file_name() == "mix.exs" {
-            if let Some(parent) = entry.path().parent() {
-                projects.push(parent.to_path_buf());
-            }
+        if entry.file_type().is_file()
+            && entry.file_name() == "mix.exs"
+            && let Some(parent) = entry.path().parent()
+        {
+            projects.push(parent.to_path_buf());
         }
     }
 
@@ -637,10 +636,8 @@ fn get_elixir_projects(path: Option<&str>, force_refresh: bool) -> Vec<PathBuf> 
     }
 
     // Try to load from cache unless force refresh
-    if !force_refresh {
-        if let Some(projects) = load_projects_from_cache() {
-            return filter_ignored(projects);
-        }
+    if !force_refresh && let Some(projects) = load_projects_from_cache() {
+        return filter_ignored(projects);
     }
 
     // Scan and cache

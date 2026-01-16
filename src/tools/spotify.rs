@@ -5,7 +5,9 @@ use tokio::process::Command;
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct SpotifyRequest {
-    #[schemars(description = "Action to perform: play, pause, play_pause, next, previous, or status")]
+    #[schemars(
+        description = "Action to perform: play, pause, play_pause, next, previous, or status"
+    )]
     pub action: String,
 }
 
